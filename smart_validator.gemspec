@@ -3,7 +3,7 @@
 require_relative "lib/smart_validator/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "smart_validator"
+  spec.name          = "smart-validator"
   spec.version       = SmartValidator::VERSION
   spec.authors       = ["dude"]
   spec.email         = ["ivan.che@okwork.io"]
