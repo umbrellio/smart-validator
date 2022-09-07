@@ -21,7 +21,7 @@ module SmartValidator
     attr_reader :value, :data
 
     def failure(code)
-      Kernel.raise Failure, code
+      raise Failure, code
     end
   end
 end
