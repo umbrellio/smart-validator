@@ -29,6 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "smart_schema", "~> 0.5"
 
+  spec.add_development_dependency "bundler-audit"
   spec.add_development_dependency "ci-helper"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "rake"
@@ -36,5 +37,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-config-umbrellio"
   spec.add_development_dependency "simplecov"
   spec.add_development_dependency "simplecov-lcov"
-  spec.add_development_dependency "bundler-audit"
 end
