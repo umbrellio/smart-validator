@@ -49,16 +49,58 @@ describe SmartValidator::Contract do
   end
 
   context "with many error codes setting" do
-    let(:additional_contract) do
-      Class.new(contract) { handle_error_codes :many }
+    let(:contract) do
+      Class.new(described_class) do
+        handle_error_codes :many
+
+        schema do
+          required(:customer) do
+            required(:first_name).type(:string).filled
+            required(:last_name).type(:string).filled
+          end
+        end
+
+        rule("customer.first_name") do
+          failure(:too_short) if value.length <= 4
+        end
+
+        rule("customer.first_name") do
+          failure(:kek_not_allowed) if value == "kek"
+        end
+      end
     end
 
     let(:customer_first_name) { "kek" }
 
     it "saves all error codes" do
       expect(result).to be_failed
-      expect(result.errors.to_h).to include(
+      expect(result.errors.to_h).to eq(
         "customer.first_name" => %i[too_short kek_not_allowed].to_set,
+      )
+    end
+  end
+
+  context "with same rule for each field" do
+    let(:contract) do
+      Class.new(described_class) do
+        schema do
+          required(:customer) do
+            required(:first_name).type(:string).filled
+            required(:last_name).type(:string).filled
+          end
+        end
+
+        rule_for_each("customer.first_name", "customer.last_name") do
+          failure(:too_short) if value.length <= 20
+        end
+      end
+    end
+
+    it "validates each field with this rule" do
+      expect(result).to be_failed
+      expect(result.errors.to_h).to eq(
+        "customer.first_name" => :too_short,
+        "customer.last_name" => :too_short,
       )
     end
   end

@@ -3,7 +3,6 @@
 module SmartValidator
   class Contract
     DEFAULT_NUMBER_OF_ERROR_CODES = :one
-    SchemaContainer = Class.new(SmartCore::Schema)
 
     # TODO: Move this logic to the module
     class << self
@@ -11,9 +10,10 @@ module SmartValidator
 
       def inherited(subclass)
         super
-        subclass.const_set(:SchemaContainer, Class.new(SchemaContainer))
-        subclass.instance_variable_set(:@rules, rules.dup || [])
-        subclass.instance_variable_set(:@error_codes, error_codes || DEFAULT_NUMBER_OF_ERROR_CODES)
+        subclass.const_set(:SchemaContainer, Class.new(SmartCore::Schema))
+        # NOTE: SmartCore::Schema doesn't provide schema inheritance.
+        subclass.instance_variable_set(:@rules, [])
+        subclass.instance_variable_set(:@error_codes, DEFAULT_NUMBER_OF_ERROR_CODES)
       end
 
       def call(*args, **kwargs)
@@ -54,7 +54,7 @@ module SmartValidator
     attr_accessor :schema, :data
 
     def build_result(errors)
-      wrapped_errors = Errors.wrap_hash(wrapped_hash: errors, handling_type: error_codes)
+      wrapped_errors = Errors.wrap_hash(wrapping_hash: errors, handling_type: error_codes)
       Result.new(errors: wrapped_errors, data: data)
     end
 

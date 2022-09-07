@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
-require "bundler/setup"
 require "simplecov"
-# require "simplecov-lcov"
+require "simplecov-lcov"
 
-# SimpleCov::Formatter::LcovFormatter.config do |c|
-#   c.report_with_single_file = true
-#   c.lcov_file_name = "lcov.info"
-#   c.output_directory = "coverage"
-# end
+SimpleCov::Formatter::LcovFormatter.config do |config|
+  config.report_with_single_file = true
+  config.single_report_path = "coverage/lcov.info"
+end
 
 SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
   SimpleCov::Formatter::HTMLFormatter,
-  # SimpleCov::Formatter::LcovFormatter,
+  SimpleCov::Formatter::LcovFormatter,
 ])
 
-SimpleCov.enable_coverage(:line)
+SimpleCov.minimum_coverage(100) if ENV["FULL_COVERAGE_CHECK"] == "true"
 SimpleCov.enable_coverage(:branch)
-SimpleCov.minimum_coverage(line: 100, branch: 100)
+SimpleCov.enable_coverage(:line)
 SimpleCov.add_filter "spec"
 SimpleCov.start
 
+require "bundler/setup"
+require "pry"
 require "smart_validator"
 
 RSpec.configure do |config|
