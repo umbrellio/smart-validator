@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    smart-validator (0.2.0)
+    smart-validator (0.1.0)
       smart_schema (~> 0.5)
 
 GEM
