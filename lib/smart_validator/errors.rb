@@ -9,9 +9,9 @@ module SmartValidator
 
     def_delegators :@errors_container, :each, :empty?, :as_json, :to_json
 
-    def self.wrap_hash(wrapped_hash:, handling_type:)
+    def self.wrap_hash(wrapping_hash:, handling_type:)
       new(handling_type).tap do |errors|
-        wrapped_hash.each do |attr_path, err_codes|
+        wrapping_hash.each do |attr_path, err_codes|
           Array(err_codes).each { |code| errors.add!(attr_path, code) }
         end
       end

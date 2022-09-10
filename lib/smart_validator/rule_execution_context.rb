@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module SmartValidator
-  class RuleExecutionContext < BasicObject
+  class RuleExecutionContext < Object
     class Failure < ::StandardError
       attr_reader :code
 
@@ -21,7 +21,7 @@ module SmartValidator
     attr_reader :value, :data
 
     def failure(code)
-      ::Kernel.raise Failure, code
+      raise Failure, code
     end
   end
 end

@@ -65,7 +65,7 @@ describe SmartValidator::Errors do
 
   context "when wrapping hash" do
     subject(:errors) do
-      described_class.wrap_hash(wrapped_hash: errors_hash, handling_type: handling_type)
+      described_class.wrap_hash(wrapping_hash: errors_hash, handling_type: handling_type)
     end
 
     let(:errors_hash) { Hash[some_field: %i[invalid required].to_set] }

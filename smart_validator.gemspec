@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.summary       = "Short decription"
   spec.description   = "PoC of validation gem."
   spec.homepage      = "https://gitlab.task4work.info/adr/smart_validator"
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.5.0")
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.6.0")
 
   spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
@@ -29,10 +29,12 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "smart_schema", "~> 0.5"
 
+  spec.add_development_dependency "bundler-audit"
   spec.add_development_dependency "ci-helper"
   spec.add_development_dependency "pry"
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rubocop-config-umbrellio"
   spec.add_development_dependency "simplecov"
+  spec.add_development_dependency "simplecov-lcov"
 end
