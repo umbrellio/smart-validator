@@ -19,15 +19,15 @@ module SmartValidator
         # TODO: Use global config until #configure is called on the class.
         def build_base_config
           config = Qonfig::DataSet.build do
-            setting :error_code_handling_type, :one
+            setting :errors_managing_type, :error_per_attribute
             setting :smart_initializer do
               # TODO: After calling configure method,
               # also apply changes to the #__settings__ of the Contract class.
               compose SmartCore::Initializer::Configuration.config.class
             end
 
-            validate :error_code_handling_type do |value|
-              SmartValidator::ERROR_CODE_HANDLING_TYPES.include?(value)
+            validate :errors_managing_type do |value|
+              SmartValidator::ErrorsController::ALLOWED_MANAGING_TYPES.key?(value)
             end
           end
 

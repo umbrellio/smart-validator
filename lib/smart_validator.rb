@@ -11,7 +11,8 @@ end
 
 require_relative "smart_validator/version"
 require_relative "smart_validator/utils"
-require_relative "smart_validator/validation_state"
+require_relative "smart_validator/errors_controller"
+require_relative "smart_validator/errors"
 require_relative "smart_validator/class_state"
 require_relative "smart_validator/rule"
 require_relative "smart_validator/rule_execution_context"

@@ -3,7 +3,7 @@
 describe SmartValidator::Result do
   subject(:result) do
     described_class.new(
-      errors: SmartValidator::ValidationState::Errors.new(:one),
+      errors: SmartValidator::Errors.new,
       data: data,
       failed: false,
     )
@@ -32,10 +32,10 @@ describe SmartValidator::Result do
     end
 
     let(:state_manager) do
-      instance_double(SmartValidator::ValidationState::Manager).tap do |instance|
+      instance_double(SmartValidator::ErrorsController::Base).tap do |instance|
         allow(instance).to receive(:freeze)
         allow(instance).to receive(:errors)
-        allow(instance).to receive(:invalid_input?)
+        allow(instance).to receive(:validation_fails?)
       end
     end
 

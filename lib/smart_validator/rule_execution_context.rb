@@ -11,7 +11,7 @@ module SmartValidator
       end
     end
 
-    Result = Struct.new(:attribute, :code)
+    Result = Struct.new(:attr_path, :code)
 
     def initialize(data, dependencies_to_bind)
       self.data = data

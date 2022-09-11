@@ -4,11 +4,11 @@ module SmartValidator
   class Result
     attr_accessor :errors, :data, :failed
 
-    def self.build_from_state(input_data, state_manager)
+    def self.build_from_state(input_data, errors_controller)
       res = new(
         data: input_data,
-        errors: state_manager.errors,
-        failed: state_manager.invalid_input?,
+        errors: errors_controller.errors,
+        failed: errors_controller.validation_fails?,
       )
       res.freeze
     end

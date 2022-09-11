@@ -53,7 +53,7 @@ describe SmartValidator::Contract do
     let(:contract) do
       Class.new(described_class) do
         configure do |config|
-          config.error_code_handling_type = :many
+          config.errors_managing_type = :many_errors_per_attribute
         end
 
         schema do
@@ -170,7 +170,7 @@ describe SmartValidator::Contract do
   context "when set invalid config" do
     def define_invalid_contract
       Class.new(described_class) do
-        configure { |c| c.error_code_handling_type = 123 }
+        configure { |c| c.errors_managing_type = 123 }
       end
     end
 

@@ -37,12 +37,12 @@ module SmartValidator
 
     def call(data_to_validate)
       self.data = Utils.deeply_symbolize_freeze(data_to_validate)
-      self.state_manager = ValidationState::Manager.new(settings)
+      self.errors_controller = ErrorsController.resolve_from(settings.errors_managing_type)
       self.rule_execution_context = build_rule_execution_context
 
       result = build_schema_instance.validate(data)
-      state_manager.merge_validation_errors!(result.errors)
-      return build_result if state_manager.invalid_input?
+      errors_controller.process_smart_schema_result!(result)
+      return build_result if errors_controller.validation_fails?
 
       check_with_rules!
       build_result
@@ -50,7 +50,7 @@ module SmartValidator
 
     private
 
-    attr_accessor :data, :state_manager, :rule_execution_context
+    attr_accessor :data, :errors_controller, :rule_execution_context
 
     def build_rule_execution_context
       RuleExecutionContext.new(data, __options__)
@@ -61,15 +61,15 @@ module SmartValidator
     end
 
     def build_result
-      Result.build_from_state(data, state_manager)
+      Result.build_from_state(data, errors_controller)
     end
 
     def check_with_rules!
       rules.each do |rule|
-        next if state_manager.skip_rule_for?(rule.checked_attr)
+        next if errors_controller.error_will_be_skipped?(rule.checked_attr)
 
         result = rule_execution_context.execute!(rule)
-        state_manager.add_error_for_attribute!(result.attribute, result.code) unless result.nil?
+        errors_controller.process_rule!(result)
       end
     end
   end
