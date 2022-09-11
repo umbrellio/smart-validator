@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe SmartValidator::Errors do
+describe SmartValidator::ValidationState::Errors do
   subject(:errors) { described_class.new(handling_type) }
 
   let(:handling_type) { :one }
 
-  specify { is_expected.to be_empty }
+  specify { is_expected.not_to be_any }
 
   context "with added errors" do
     before { errors.add!(:some_field, :invalid) }
@@ -15,9 +15,9 @@ describe SmartValidator::Errors do
       expect(errors["some_field"]).to eq(:invalid)
     end
 
-    it "properly responses to skip_validation_check_for?" do
-      expect(errors.skip_validation_check_for?(:some_field)).to be_truthy
-      expect(errors.skip_validation_check_for?(:other_field)).to be_falsey
+    it "properly responses to invalid_attribute?" do
+      expect(errors.invalid_attribute?(:some_field)).to be_truthy
+      expect(errors.invalid_attribute?(:other_field)).to be_falsey
     end
   end
 
@@ -50,28 +50,11 @@ describe SmartValidator::Errors do
       expect(errors[:some_field]).to be_an_instance_of(Set)
       expect(errors[:some_field]).to include(:invalid, :required)
     end
-
-    it "properly responses to skip_validation_check_for?" do
-      expect(errors.skip_validation_check_for?(:some_field)).to be_falsey
-      expect(errors.skip_validation_check_for?(:other_field)).to be_falsey
-    end
   end
 
   context "with invalid handling type" do
     it "raises ArgumentError" do
       expect { described_class.new(:invalid_type) }.to raise_error(ArgumentError)
-    end
-  end
-
-  context "when wrapping hash" do
-    subject(:errors) do
-      described_class.wrap_hash(wrapping_hash: errors_hash, handling_type: handling_type)
-    end
-
-    let(:errors_hash) { Hash[some_field: %i[invalid required].to_set] }
-
-    it "properly wraps this hash" do
-      expect(errors[:some_field]).to eq(:invalid)
     end
   end
 end

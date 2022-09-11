@@ -5,18 +5,18 @@ require_relative "lib/smart_validator/version"
 Gem::Specification.new do |spec|
   spec.name          = "smart-validator"
   spec.version       = SmartValidator::VERSION
-  spec.authors       = ["dude"]
-  spec.email         = ["ivan.che@okwork.io"]
+  spec.authors       = ["JustAnotherDude"]
+  spec.email         = ["vanyaz158@gmail.com"]
 
   spec.summary       = "Short decription"
   spec.description   = "PoC of validation gem."
-  spec.homepage      = "https://gitlab.task4work.info/adr/smart_validator"
+  spec.homepage      = "https://github.com/umbrellio/smart-validator"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.6.0")
 
   spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
   spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://gitlab.task4work.info/adr/smart_validator"
+  spec.metadata["source_code_uri"] = "https://github.com/umbrellio/smart-validator"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -27,7 +27,9 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "smart_schema", "~> 0.5"
+  spec.add_dependency "qonfig"
+  spec.add_dependency "smart_initializer"
+  spec.add_dependency "smart_schema"
 
   spec.add_development_dependency "bundler-audit"
   spec.add_development_dependency "ci-helper"

@@ -1,13 +1,15 @@
 PATH
   remote: .
   specs:
-    smart-validator (0.1.0)
-      smart_schema (~> 0.5)
+    smart-validator (0.2.0)
+      qonfig
+      smart_initializer
+      smart_schema
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.6.1)
+    activesupport (6.1.7)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -38,6 +40,7 @@ GEM
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
+    qonfig (0.28.0)
     rack (3.0.0)
     rainbow (3.1.1)
     rake (13.0.6)
@@ -96,8 +99,12 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
     simplecov-lcov (0.8.0)
-    simplecov_json_formatter (0.1.4)
+    simplecov_json_formatter (0.1.3)
     smart_engine (0.12.0)
+    smart_initializer (0.9.1)
+      qonfig (~> 0.24)
+      smart_engine (~> 0.11)
+      smart_types (~> 0.4)
     smart_schema (0.5.0)
       smart_engine (~> 0.11)
       smart_types (~> 0.4)
@@ -128,4 +135,4 @@ DEPENDENCIES
   smart-validator!
 
 BUNDLED WITH
-   2.3.21
+   2.3.22
