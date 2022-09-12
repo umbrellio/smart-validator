@@ -5,8 +5,8 @@ module SmartValidator
     extend self
 
     def deeply_symbolize_freeze(hash)
-      hash.freeze.transform_keys(&:to_sym).transform_values do |value|
-        next value.freeze unless value.is_a?(Hash)
+      hash.dup.freeze.transform_keys(&:to_sym).transform_values do |value|
+        next value.dup.freeze unless value.is_a?(Hash)
 
         deeply_symbolize_freeze(value)
       end
