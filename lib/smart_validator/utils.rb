@@ -4,11 +4,11 @@ module SmartValidator
   module Utils
     extend self
 
-    def deeply_symbolize(hash)
-      hash.transform_keys(&:to_sym).transform_values do |value|
-        next value unless value.is_a?(Hash)
+    def deeply_symbolize_freeze(hash)
+      hash.dup.freeze.transform_keys(&:to_sym).transform_values do |value|
+        next value.dup.freeze unless value.is_a?(Hash)
 
-        deeply_symbolize(value)
+        deeply_symbolize_freeze(value)
       end
     end
   end

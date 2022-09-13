@@ -10,12 +10,12 @@ module SmartValidator
       @checking_block = checking_block
     end
 
-    def run_for(data)
-      value = data.dig(*@attr_path)
-      RuleExecutionContext.new(value, data).instance_eval(&@checking_block)
-      nil
-    rescue RuleExecutionContext::Failure => e
-      e.code
+    def value_from(data)
+      data.dig(*@attr_path)
+    end
+
+    def to_proc
+      @checking_block
     end
   end
 end

@@ -2,80 +2,75 @@
 
 module SmartValidator
   class Contract
-    DEFAULT_NUMBER_OF_ERROR_CODES = :one
+    include SmartCore::Initializer
+    include ClassState::InitializeMixin
 
-    # TODO: Move this logic to the module
     class << self
-      attr_reader :rules, :error_codes
-
       def inherited(subclass)
         super
-        subclass.const_set(:SchemaContainer, Class.new(SmartCore::Schema))
-        # NOTE: SmartCore::Schema doesn't provide schema inheritance.
-        subclass.instance_variable_set(:@rules, [])
-        subclass.instance_variable_set(:@error_codes, DEFAULT_NUMBER_OF_ERROR_CODES)
+        subclass.__state_container__ = __state_container__.dup
       end
 
-      def call(*args, **kwargs)
-        new.call(*args, **kwargs)
+      def param(*)
+        raise NotImplementedError, "params are not permitted to use in validators"
+      end
+
+      # NOTE: In Ruby 2.6.x need to initialize instance without arguments if they not expected.
+      def call(data_to_validate, **kwargs)
+        instance = kwargs.empty? ? new : new(**kwargs)
+        instance.call(data_to_validate)
       end
 
       def schema(&block)
-        self::SchemaContainer.schema(&block)
+        schema_class.schema(&block)
       end
 
+      # TODO: Delegate all this logic to the Rules.
       def rule(checked_value, &block)
-        @rules << Rule.new(checked_value, block)
+        rules << Rule.new(checked_value, block)
       end
 
       def rule_for_each(*checked_values, &block)
         checked_values.each { |checked_value| rule(checked_value, &block) }
       end
-
-      def handle_error_codes(handling_type)
-        @error_codes = handling_type
-      end
     end
 
-    def initialize
-      self.schema = self.class::SchemaContainer.new
-    end
+    def call(data_to_validate)
+      self.data = Utils.deeply_symbolize_freeze(data_to_validate)
+      self.errors_controller = ErrorsController.resolve_from(settings.errors_managing_type)
+      self.rule_execution_context = build_rule_execution_context
 
-    def call(validated_data)
-      self.data = Utils.deeply_symbolize(validated_data)
-      result = schema.validate(data)
-      return build_result(result.errors) unless result.success?
+      result = build_schema_instance.validate(data)
+      errors_controller.process_smart_schema_result!(result)
+      return build_result if errors_controller.validation_fails?
 
-      check_with_rules
+      check_with_rules!
+      build_result
     end
 
     private
 
-    attr_accessor :schema, :data
+    attr_accessor :data, :errors_controller, :rule_execution_context
 
-    def build_result(errors)
-      wrapped_errors = Errors.wrap_hash(wrapping_hash: errors, handling_type: error_codes)
-      Result.new(errors: wrapped_errors, data: data)
+    def build_rule_execution_context
+      RuleExecutionContext.new(data, __options__)
     end
 
-    def check_with_rules
-      safe_data = data.dup.freeze
-      errors = rules.each_with_object(Errors.new(error_codes)) do |rule, errors|
-        next if errors.skip_validation_check_for?(rule.checked_attr)
+    def build_schema_instance
+      schema_class.new
+    end
 
-        error_code = rule.run_for(safe_data)
-        errors.add!(rule.checked_attr, error_code) unless error_code.nil?
+    def build_result
+      Result.build_from_state(data, errors_controller)
+    end
+
+    def check_with_rules!
+      rules.each do |rule|
+        next if errors_controller.error_will_be_skipped?(rule.checked_attr)
+
+        result = rule_execution_context.execute!(rule)
+        errors_controller.process_rule!(result)
       end
-
-      Result.new(errors: errors, data: data)
-    end
-
-    def rules
-      self.class.rules
-    end
-
-    def error_codes
-      self.class.error_codes
     end
   end
 end

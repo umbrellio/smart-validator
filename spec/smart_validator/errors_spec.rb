@@ -1,29 +1,22 @@
 # frozen_string_literal: true
 
 describe SmartValidator::Errors do
-  subject(:errors) { described_class.new(handling_type) }
+  subject(:errors) { described_class.new }
 
-  let(:handling_type) { :one }
+  specify { is_expected.not_to be_any }
 
-  specify { is_expected.to be_empty }
-
-  context "with added errors" do
-    before { errors.add!(:some_field, :invalid) }
+  context "with safely added errors" do
+    before { errors.safely_add!(attr_path: :some_field, error_code: :invalid) }
 
     it "provides indifferent access" do
       expect(errors[:some_field]).to eq(:invalid)
       expect(errors["some_field"]).to eq(:invalid)
     end
-
-    it "properly responses to skip_validation_check_for?" do
-      expect(errors.skip_validation_check_for?(:some_field)).to be_truthy
-      expect(errors.skip_validation_check_for?(:other_field)).to be_falsey
-    end
   end
 
-  context "with multiple error codes for same field" do
-    before { errors.add!(:some_field, :invalid) }
-    before { errors.add!(:some_field, :required) }
+  context "with multiple error codes safely added for same field" do
+    before { errors.safely_add!(attr_path: :some_field, error_code: :invalid) }
+    before { errors.safely_add!(attr_path: :some_field, error_code: :required) }
 
     it "saves only first error code" do
       expect(errors[:some_field]).to eq(:invalid)
@@ -40,38 +33,13 @@ describe SmartValidator::Errors do
     end
   end
 
-  context "with :many handling type" do
-    before { errors.add!(:some_field, :invalid) }
-    before { errors.add!(:some_field, :required) }
-
-    let(:handling_type) { :many }
+  context "when safely merging" do
+    before { errors.safely_merge!(attr_path: :some_field, errors_enum: [:invalid]) }
+    before { errors.safely_merge!(attr_path: :some_field, errors_enum: [:required]) }
 
     it "saves all error codes" do
       expect(errors[:some_field]).to be_an_instance_of(Set)
       expect(errors[:some_field]).to include(:invalid, :required)
-    end
-
-    it "properly responses to skip_validation_check_for?" do
-      expect(errors.skip_validation_check_for?(:some_field)).to be_falsey
-      expect(errors.skip_validation_check_for?(:other_field)).to be_falsey
-    end
-  end
-
-  context "with invalid handling type" do
-    it "raises ArgumentError" do
-      expect { described_class.new(:invalid_type) }.to raise_error(ArgumentError)
-    end
-  end
-
-  context "when wrapping hash" do
-    subject(:errors) do
-      described_class.wrap_hash(wrapping_hash: errors_hash, handling_type: handling_type)
-    end
-
-    let(:errors_hash) { Hash[some_field: %i[invalid required].to_set] }
-
-    it "properly wraps this hash" do
-      expect(errors[:some_field]).to eq(:invalid)
     end
   end
 end

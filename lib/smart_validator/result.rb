@@ -2,23 +2,35 @@
 
 module SmartValidator
   class Result
-    attr_reader :errors
+    attr_accessor :errors, :data, :failed
 
-    def initialize(errors:, data:)
-      @errors = errors
-      @data = data
+    def self.build_from_state(input_data, errors_controller)
+      res = new(
+        data: input_data,
+        errors: errors_controller.errors,
+        failed: errors_controller.validation_fails?,
+      )
+      res.freeze
     end
 
-    def to_h
-      @data.dup
+    def initialize(errors:, data:, failed:)
+      self.errors = errors
+      self.data = data
+      self.failed = failed
     end
 
     def success?
-      @errors.empty?
+      !failed
     end
 
-    def failed?
-      !success?
+    def freeze
+      super.tap do
+        errors.freeze
+        data.freeze
+      end
     end
+
+    alias failed? failed
+    alias to_h data
   end
 end
