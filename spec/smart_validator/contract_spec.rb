@@ -178,4 +178,51 @@ describe SmartValidator::Contract do
       expect { define_invalid_contract }.to raise_error(Qonfig::ValidationError)
     end
   end
+
+  context "when non strict schema" do
+    let(:contract) do
+      Class.new(described_class) do
+        schema do
+          non_strict!
+
+          optional(:age).type(:integer).filled
+          optional(:customer) do
+            required(:first_name).type(:string).filled
+          end
+        end
+
+        rule("customer.first_name") do
+          failure(:too_short) if value.length <= 4
+        end
+
+        rule("gender") do
+          failure(:under_age) if value < 18
+        end
+      end
+    end
+    let(:checking_data) do
+      { other_field: "value" }
+    end
+
+    specify { is_expected.to be_success }
+  end
+
+  context "when attr is optional" do
+    let(:contract) do
+      Class.new(described_class) do
+        schema do
+          optional(:age).type(:integer).filled
+        end
+
+        rule("gender") do
+          failure(:under_age) if value < 18
+        end
+      end
+    end
+    let(:checking_data) do
+      {}
+    end
+
+    specify { is_expected.to be_success }
+  end
 end
