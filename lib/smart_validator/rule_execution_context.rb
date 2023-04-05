@@ -20,7 +20,7 @@ module SmartValidator
 
     def execute!(rule)
       self.value = rule.value_from(data)
-      instance_eval(&rule)
+      instance_eval(&rule) if rule.executable?(data)
       nil
     rescue Failure => e
       Result.new(rule.checked_attr, e.code).freeze
