@@ -1,5 +1,13 @@
 # SmartValidator
 
+---
+
+**Important**
+
+This repository is archived and reworked as `smart-rb/smart_validator`. To continue using `smart_validator` you should migrate to https://github.com/smart-rb/smart_validator/
+
+---
+
 Watch specs.
 
 ## Installation
